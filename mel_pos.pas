@@ -22,6 +22,7 @@ type
     procedure InitSerial(const APort: string; ABaud: LongInt);
     procedure SendPacket(const Direction, Variant, Version: string; MsgType: Byte; const Payload: array of Byte);
     procedure SendSALE(const Payload: array of Byte);
+    procedure SendCloseBatch;
     function ReceivePacket(out Direction, Variant, Version: string; out MsgType: Byte; out Payload: TBytes; TimeoutMS: Integer = 1000): Boolean;
   end;
 
@@ -106,6 +107,13 @@ end;
 procedure TMelPos.SendSALE(const Payload: array of Byte);
 begin
   SendPacket('MAC', '01', '01', 4, Payload);
+end;
+
+procedure TMelPos.SendCloseBatch;
+const
+  Payload: array[0..2] of Byte = (Ord('/'), Ord('B'), Ord('C'));
+begin
+  SendPacket('MAC', '01', '01', 15, Payload);
 end;
 
 function TMelPos.ReceivePacket(out Direction, Variant, Version: string; out MsgType: Byte; out Payload: TBytes; TimeoutMS: Integer): Boolean;
